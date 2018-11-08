@@ -1,0 +1,71 @@
+version: '3'
+
+services:
+
+  nats-cluster-node-1:
+    image: nats:1.3.0
+    command: -cluster nats://0.0.0.0:6222 -routes nats://nats-cluster-node-1:6222,nats://nats-cluster-node-2:6222,nats://nats-cluster-node-3:6222
+    networks:
+      nats-network:
+        aliases:
+          - nats-cluster-node-1
+
+  nats-cluster-node-2:
+    image: nats:1.3.0
+    command: -cluster nats://0.0.0.0:6222 -routes nats://nats-cluster-node-1:6222,nats://nats-cluster-node-2:6222,nats://nats-cluster-node-3:6222
+    networks:
+      nats-network:
+        aliases:
+          - nats-cluster-node-2
+
+  nats-cluster-node-3:
+    image: nats:1.3.0
+    command: -cluster nats://0.0.0.0:6222 -routes nats://nats-cluster-node-1:6222,nats://nats-cluster-node-2:6222,nats://nats-cluster-node-3:6222
+    networks:
+      nats-network:
+        aliases:
+          - nats-cluster-node-3
+
+  nats-streaming-node-1:
+    image: nats-streaming:0.11.2
+    command: -store file -dir store -clustered -cluster_id nats_cluster -cluster_node_id node-1 -cluster_peers node-1,node-2,node-3 -nats_server nats://nats-cluster-node-1:4222,nats://nats-cluster-node-2:4222,nats://nats-cluster-node-3:4222
+    networks:
+      nats-network:
+        aliases:
+          - node-1
+          - nats-streaming-node-1
+    volumes:
+      - ./volumes/node-1:/store
+
+  nats-streaming-node-2:
+    image: nats-streaming:0.11.2
+    command: -store file -dir store -clustered -cluster_id nats_cluster -cluster_node_id node-2 -cluster_peers node-1,node-2,node-3 -nats_server nats://nats-cluster-node-1:4222,nats://nats-cluster-node-2:4222,nats://nats-cluster-node-3:4222
+    networks:
+      nats-network:
+        aliases:
+          - node-2
+          - nats-streaming-node-2
+    volumes:
+      - ./volumes/node-2:/store
+
+  nats-streaming-node-3:
+    image: nats-streaming:0.11.2
+    command: -store file -dir store -clustered -cluster_id nats_cluster -cluster_node_id node-3 -cluster_peers node-1,node-2,node-3 -nats_server nats://nats-cluster-node-1:4222,nats://nats-cluster-node-2:4222,nats://nats-cluster-node-3:4222
+    networks:
+      nats-network:
+        aliases:
+          - node-3
+          - nats-streaming-node-3
+    volumes:
+      - ./volumes/node-3:/store
+
+  app:
+    build: .
+    volumes:
+      - .:/opt/app
+    networks:
+      - nats-network
+
+networks:
+  nats-network:
+    external: true
