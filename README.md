@@ -2,13 +2,26 @@
 
 Sample project to demostrate Nats Streaming setup.
 
-## How to
+## How to (Swarm)
 
 ```bash
 git clone https://github.com/DidierHoarau/sample-nats-streaming-nodejs.git
 cd sample-nats-streaming-nodejs
-chmod +x start-demo.sh
-./start-demo.sh
+./demo-swarm.sh
+```
+
+## How to (Kubernetes)
+
+```bash
+git clone https://github.com/DidierHoarau/sample-nats-streaming-nodejs.git
+cd sample-nats-streaming-nodejs
+./demo-kubernetes.sh
+```
+
+## Clean (Kubernetes)
+
+```bash
+./clean.sh
 ```
 
 ## Reference
@@ -17,3 +30,4 @@ chmod +x start-demo.sh
 - https://hub.docker.com/r/library/nats/
 - https://hub.docker.com/r/library/nats-streaming/
 - https://github.com/nats-io/node-nats-streaming
+- https://github.com/nats-io/nats-streaming-operator
